@@ -1,28 +1,30 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"github.com/aws/aws-sdk-go/aws/defaults"
 
-	"golang.org/x/net/html"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+)
+
+const (
+	region = "us-east-1"
 )
 
 func main() {
-	resp, err := http.Get("http://myanimelist.net/users.php")
-	if err != nil {
-		fmt.Print(err)
-	}
-	defer resp.Body.Close()
-	parser := html.NewTokenizer(resp.Body)
 	for {
-		tt := parser.Next()
-		if tt == html.ErrorToken {
-			return
-		}
-		token := parser.Token()
-		if len(token.Attr) > 0 {
-			// [{ href /profile/ReapStick}]
-			fmt.Println(token.Attr)
-		}
+
 	}
+}
+
+func getSession() *session.Session {
+	config := aws.NewConfig().
+		WithMaxRetries(3).
+		WithRegion(region)
+
+	session := session.Must(session.NewSession(
+		config.
+			WithCredentials(defaults.CredChain(config, defaults.Handlers())),
+	))
+	return session
 }
