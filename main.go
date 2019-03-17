@@ -120,7 +120,13 @@ func buildBatchRequestEntry(user string) *sqs.SendMessageBatchRequestEntry {
 	UUID := uuid.New()
 	id := strconv.FormatUint(binary.BigEndian.Uint64(UUID[:]), 16)
 	return &sqs.SendMessageBatchRequestEntry{
-		Id:          aws.String(string(id)),
+		Id:          aws.String(id),
 		MessageBody: aws.String(user),
+		MessageAttributes: map[string]*sqs.MessageAttributeValue{
+			"Retries": &sqs.MessageAttributeValue{
+				DataType:    aws.String("Number"),
+				StringValue: aws.String("0"),
+			},
+		},
 	}
 }
